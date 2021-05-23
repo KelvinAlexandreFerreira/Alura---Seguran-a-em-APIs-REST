@@ -1,3 +1,4 @@
+const { authenticate } = require('passport');
 const passport = require('passport');
 
 module.exports = {
@@ -19,6 +20,29 @@ module.exports = {
                 }
 
                 req.user = usuario;
+                return next();
+            }
+        )(req, res, next);
+    },
+
+    bearer: (req, res, next) => {
+        passport.authenticate(
+            'bearer',
+            { session: false },
+            (erro, usuario, info) => {
+                if (erro && erro.name === 'JsonWebTokenError') {
+                    return res.status(401).json({ erro: erro.message });
+                }
+
+                if (erro) {
+                    return res.status(500).json({ erro: erro.message });
+                }
+
+                if (!usuario) {
+                    return res.status(401).json();
+                }
+
+                require.user = usuario;
                 return next();
             }
         )(req, res, next);
