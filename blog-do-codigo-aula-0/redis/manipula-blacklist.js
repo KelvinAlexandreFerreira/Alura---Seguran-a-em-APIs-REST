@@ -1,8 +1,8 @@
 const blacklist = require('./blacklist');
 
-const { promisefy } = require('util');
-const existsAsync = promisefy(blacklist.exists).bind(blacklist);
-const setAsync = promisefy(blacklist.set).bind(blacklist);
+const { promisify } = require('util');
+const existsAsync = promisify(blacklist.exists).bind(blacklist);
+const setAsync = promisify(blacklist.set).bind(blacklist);
 
 const jwt = require('jsonwebtoken');
 const { createHash } = require('crypto');

@@ -46,7 +46,8 @@ module.exports = {
                     return res.status(401).json();
                 }
 
-                require.user = usuario;
+                req.token = info.token;
+                req.user = usuario;
                 return next();
             }
         )(req, res, next);
