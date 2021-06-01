@@ -1,5 +1,5 @@
 const Usuario = require('./usuarios-modelo');
-const { InvalidArgumentError, InternalServerError } = require('../erros');
+const { InvalidArgumentError } = require('../erros');
 
 const jwt = require('jsonwebtoken')
 const blacklist = require('../../redis/manipula-blacklist');
@@ -7,14 +7,14 @@ const blacklist = require('../../redis/manipula-blacklist');
 function criaTokenJWT(usuario) {
   const payload = {
     id: usuario.id
-  }
+  };
 
   const token = jwt.sign(payload, process.env.CHAVE_JWT, { expiresIn: '15m' });
   return token;
 }
 
 module.exports = {
-  adiciona: async (req, res) => {
+  async adiciona(req, res) {
     const { nome, email, senha } = req.body;
 
     try {
@@ -30,37 +30,38 @@ module.exports = {
       res.status(201).json();
     } catch (erro) {
       if (erro instanceof InvalidArgumentError) {
-        res.status(422).json({ erro: erro.message });
-      } else if (erro instanceof InternalServerError) {
-        res.status(500).json({ erro: erro.message });
-      } else {
-        res.status(500).json({ erro: erro.message });
+        return res.status(400).json({ erro: erro.message });
       }
+      res.status(500).json({ erro: erro.message });
     }
   },
 
-  login: (req, res) => {
-    const token = criaTokenJWT(req.user);
-    res.set('Authorization', token);
-    res.status(204).send();
+  async login(req, res) {
+    try {
+      const token = criaTokenJWT(req.user);
+      res.set('Authorization', token);
+      res.status(204).send();
+    } catch (erro) {
+      res.status(500).json({ erro: erro.message });
+    }
   },
 
-  logout: async (req, res) => {
+  async logout(req, res){
     try {
       const token = req.token;
       await blacklist.adiciona(token);
       res.status(204).send();
     } catch (erro) {
-      res.status(500).json({ erro: erro.message }); 
+      res.status(500).json({ erro: erro.message });
     }
   },
 
-  lista: async (req, res) => {
+  async lista(req, res){
     const usuarios = await Usuario.lista();
     res.json(usuarios);
   },
 
-  deleta: async (req, res) => {
+  async deleta(req, res){
     const usuario = await Usuario.buscaPorId(req.params.id);
     try {
       await usuario.deleta();
