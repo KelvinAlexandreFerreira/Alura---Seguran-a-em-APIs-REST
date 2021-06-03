@@ -9,7 +9,7 @@ const dbAll = promisify(db.all).bind(db);
 module.exports = {
   async adiciona(usuario){
     try{
-      await dbRun(
+      return await dbRun(
         `
           INSERT INTO usuarios (
             nome,
@@ -26,7 +26,7 @@ module.exports = {
 
   async buscaPorId(id){
     try{
-      await dbGet(
+      return await dbGet(
         `
           SELECT *
           FROM usuarios
@@ -41,7 +41,7 @@ module.exports = {
 
   async buscaPorEmail(email){
     try{
-      await dbGet(
+      return await dbGet(
         `
           SELECT *
           FROM usuarios
@@ -56,7 +56,7 @@ module.exports = {
 
   async lista(){
     try{
-      await dbAll(
+      return await dbAll(
         `
           SELECT * FROM usuarios
         `
@@ -68,7 +68,7 @@ module.exports = {
 
   async deleta(usuario){
     try{
-      await dbRun(
+      return await dbRun(
         `
           DELETE FROM usuarios
           WHERE id = ?
