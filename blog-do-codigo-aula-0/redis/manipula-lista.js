@@ -11,7 +11,7 @@ module.exports = lista => {
     return {
         async adiciona(chave, valor, dataExpiracao){
             await setAsync(chave, valor);
-            lista.expireAt(chave, dataExpiracao);
+            lista.expireat(chave, dataExpiracao);
         },
 
         async buscaValor(chave){
