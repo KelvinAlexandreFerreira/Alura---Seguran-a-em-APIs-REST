@@ -26,6 +26,9 @@ async function verificaTokenNaBlocklist(token, nome, blocklist) {
     }
 }
 
+function invalidaTokenJWT(token, blocklist) {
+    return blocklist.adiciona(token);
+}
 
 async function criaTokenOpaco(id, [tempoQuantidade, tempoUnidade], allowlist) {
     const tokenOpaco = crypto.randomBytes(24).toString('hex');
@@ -39,6 +42,10 @@ async function verificaTokenOpaco(token, nome, allowlist) {
     const id = await allowlist.buscaValor(token);
     verificaTokenValido(id, nome);
     return id;
+}
+
+async function invalidaTokenOpaco(token, allowlist) {
+    await allowlist.deleta(token);
 }
 
 function verificaTokenValido(id, nome) {
@@ -63,6 +70,9 @@ module.exports = {
         },
         verifica(token){
             return verficaTokenJWT(token, this.nome, this.lista);
+        },
+        invalida(token){
+            return invalidaTokenJWT(token, this.lista);
         }
     },
     refresh:{
@@ -74,6 +84,9 @@ module.exports = {
         },
         verifica(token){
             return verificaTokenOpaco(token, this.nome, this.lista);
+        },
+        invalida(token){
+            return invalidaTokenOpaco(token, this.lista);
         }
     }
 }
