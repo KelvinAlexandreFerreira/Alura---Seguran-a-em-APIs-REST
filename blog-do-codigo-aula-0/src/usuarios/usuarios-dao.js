@@ -14,10 +14,11 @@ module.exports = {
           INSERT INTO usuarios (
             nome,
             email,
-            senhaHash
-          ) VALUES (?, ?, ?)
+            senhaHash,
+            emailVerificado
+          ) VALUES (?, ?, ?, ?)
         `,
-        [usuario.nome, usuario.email, usuario.senhaHash]
+        [usuario.nome, usuario.email, usuario.senhaHash, usuario.emailVerificado]
       );
     }catch(erro) {
       throw new InternalServerError('Erro ao adicionar o usuário!');
